@@ -1,21 +1,24 @@
 <?php
 namespace App\Models;
 
-// Database pertence ao mesmo namespace App\Models.
-
 class User
 {
     public static function all(): array
     {
         return Database::connect()
-            ->query('SELECT * FROM users ORDER BY name')
+            ->query('SELECT id_usuario, nome, email
+                     FROM usuario
+                     WHERE ativo = 1
+                     ORDER BY nome')
             ->fetchAll();
     }
 
     public static function find(int $id): ?array
     {
         $stmt = Database::connect()->prepare(
-            'SELECT * FROM users WHERE id = ?'
+            'SELECT id_usuario, nome, email
+             FROM usuario
+             WHERE id_usuario = ? AND ativo = 1'
         );
         $stmt->execute([$id]);
         return $stmt->fetch() ?: null;
@@ -23,20 +26,23 @@ class User
 
     public static function emailExists(string $email): bool
     {
-        $stmt = Database::connect()->prepare('SELECT 1 FROM users WHERE
-email = ?');
+        $stmt = Database::connect()->prepare(
+            'SELECT 1 FROM usuario WHERE email = ?'
+        );
         $stmt->execute([$email]);
-
-
         return (bool) $stmt->fetchColumn();
     }
 
-    public static function create(string $name, string $email): int
+    public static function create(string $nome, string $email, string $senha): int
     {
-        $stmt = Database::connect()->prepare(
-            'INSERT INTO users (name, email) VALUES (?, ?)'
+        $hash = password_hash($senha, PASSWORD_DEFAULT);
+
+        $pdo  = Database::connect();
+        $stmt = $pdo->prepare(
+            "INSERT INTO usuario (nome, email, senha, tipo_user)
+             VALUES (?, ?, ?, 'final')"
         );
-        $stmt->execute([$name, $email]);
-        return (int) Database::connect()->lastInsertId();
+        $stmt->execute([$nome, $email, $hash]);
+        return (int) $pdo->lastInsertId();
     }
 }

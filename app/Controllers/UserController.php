@@ -3,18 +3,17 @@ namespace App\Controllers;
 
 use App\Models\User;
 use App\Validators\UserValidator;
-use Soap\Url;
 
 class UserController
 {
     public function index(): void
     {
-
         $this->render('users/index', [
             'title' => 'Usuários',
             'users' => User::all(),
         ]);
     }
+
     public function show(string $id = ''): void
     {
         $user = User::find((int) $id);
@@ -26,17 +25,15 @@ class UserController
             'title' => 'Usuário',
             'users' => [$user],
         ]);
-
-
     }
 
     public function create(): void
     {
         $this->render('users/form', [
-            'title' => 'Novo usuário',
+            'title'  => 'Novo usuário',
             'errors' => [],
-            'old' => [],
-            'csrf' => $this->csrfToken(),
+            'old'    => [],
+            'csrf'   => $this->csrfToken(),
         ]);
     }
 
@@ -49,8 +46,9 @@ class UserController
         $this->checkCsrf();
 
         $input = [
-            'name' => trim($_POST['name'] ?? ''),
+            'nome'  => trim($_POST['nome'] ?? ''),
             'email' => trim($_POST['email'] ?? ''),
+            'senha' => $_POST['senha'] ?? '', // senha não leva trim
         ];
 
         $errors = (new UserValidator())->validate($input);
@@ -61,19 +59,16 @@ class UserController
         if ($errors) {
             http_response_code(422);
             $this->render('users/form', [
-
-
-
-
-                'title' => 'Novo usuário',
+                'title'  => 'Novo usuário',
                 'errors' => $errors,
-                'old' => $input,
-                'csrf' => $this->csrfToken(),
+                // a senha nunca volta para o formulário
+                'old'    => ['nome' => $input['nome'], 'email' => $input['email']],
+                'csrf'   => $this->csrfToken(),
             ]);
             return;
         }
 
-        User::create($input['name'], $input['email']);
+        User::create($input['nome'], $input['email'], $input['senha']);
         header('Location: ' . url('user/index'));
         exit;
     }
@@ -97,10 +92,7 @@ class UserController
     {
         $base = __DIR__ . '/../Views/';
 
-
-
-        $renderFile = static function (string $__file, array $__data):
-            string {
+        $renderFile = static function (string $__file, array $__data): string {
             extract($__data, EXTR_SKIP);
             ob_start();
             require $__file;
