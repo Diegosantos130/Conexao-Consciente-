@@ -1,27 +1,9 @@
-* { box-sizing: border-box; }
-
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    color: #222;
-    background: #f5f6f8;
-}
-
-
-.topo {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.75rem 1.5rem;
-    background: #1f3864;
-}
-.topo a { color: #fff; margin-right: 1rem; text-decoration: none; }
-
-main { max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
-
-label { display: block; margin-top: 1rem; }
-input { width: 100%; padding: 0.5rem; }
-button { margin-top: 1rem; padding: 0.5rem 1.25rem; }
-
-.erro { color: #b00020; margin: 0.25rem 0 0; }
-.lista li { margin: 0.5rem 0; }
+/* Ajustes específicos do Conexão Consciente sobre o tema Modern Business. */
+body { background-color: #f8f9fa; }
+.navbar-brand { letter-spacing: .2px; }
+.text-primary { color: #0d6efd !important; }
+.card { border-radius: .75rem; }
+.form-control { padding-top: .75rem; padding-bottom: .75rem; }
+.form-control:focus { box-shadow: 0 0 0 .25rem rgba(13,110,253,.15); }
+.table th { font-size: .875rem; color: #495057; font-weight: 600; white-space: nowrap; }
+.table td { padding-top: .9rem; padding-bottom: .9rem; }
